@@ -4,9 +4,9 @@ import { COMPANIES } from './data'
 import './CompanyPage.css'
 
 export default function CompanyPage() {
-  const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
-  const company = COMPANIES.find(c => c.id === id)
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const company = COMPANIES.find(c => c.id === id);
 
   useEffect(() => { window.scrollTo(0, 0) }, [])
 
@@ -29,7 +29,7 @@ export default function CompanyPage() {
       </div>
 
       {/* Back button */}
-      <button className="cp-back" onClick={() => navigate('/')}>
+      <button className="cp-back" onClick={() => navigate(-1)}>
         ← Back to Portfolio
       </button>
 
@@ -83,9 +83,9 @@ export default function CompanyPage() {
                 <div className="cp-tech-chips">
                   {p.tech.map(t => <span key={t} className="cp-tech-chip" style={{ '--chip-color': p.color } as React.CSSProperties}>{t}</span>)}
                 </div>
-                <a href={p.link} target="_blank" rel="noreferrer" className="cp-proj-link" style={{ color: p.color }}>
+                {/* <a href={p.link} target="_blank" rel="noreferrer" className="cp-proj-link" style={{ color: p.color }}>
                   {p.badge ? '🌐 Visit Website →' : '⌥ View on GitHub →'}
-                </a>
+                </a> */}
               </div>
             ))}
           </div>
