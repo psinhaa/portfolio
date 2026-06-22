@@ -595,8 +595,7 @@ export default function App() {
           <div className="contact-inner">
             <h2 className="section-heading">Let's Connect</h2>
             <p className="contact-sub">
-              I'm currently open to new opportunities — feel free to reach out whether it's a role,
-              a freelance project, or just a chat about tech.
+              I'm currently open to new opportunities — feel free to reach out whether it's a role, or just a chat about tech.
             </p>
             <a href="mailto:2308parulsinha@gmail.com" className="btn-primary btn-lg">✉ Say Hello</a>
             <div className="contact-links">
