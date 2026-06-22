@@ -1,0 +1,388 @@
+/* ── Reset ────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Tokens ───────────────────────────────────────────────────────────────── */
+:root {
+  --pink:    #e91e8c;
+  --purple:  #6c63ff;
+  --cyan:    #00bcd4;
+  --orange:  #ff9800;
+  --green:   #4caf50;
+
+  /* dark (default) */
+  --bg:       #0d0d1a;
+  --bg2:      #13132b;
+  --card:     #1a1a35;
+  --text:     #f0f0f8;
+  --muted:    #8888aa;
+  --border:   rgba(255,255,255,0.09);
+  --track:    rgba(255,255,255,0.08);
+}
+
+/* light theme */
+[data-theme="light"] {
+  --bg:     #f4f3ff;
+  --bg2:    #ebe9ff;
+  --card:   #ffffff;
+  --text:   #1a1a2e;
+  --muted:  #5a5a80;
+  --border: rgba(0,0,0,0.09);
+  --track:  rgba(0,0,0,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ── Theme toggle ─────────────────────────────────────────────────────────── */
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 100;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card);
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+.theme-toggle:hover { transform: scale(1.1); }
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.hero-section {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 25% 40%, rgba(108,99,255,.28) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 45% at 75% 60%, rgba(233,30,140,.22) 0%, transparent 70%);
+  animation: pulse-bg 7s ease-in-out infinite alternate;
+}
+@keyframes pulse-bg { from { opacity: .7 } to { opacity: 1 } }
+
+.hero-content {
+  position: relative;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), var(--pink));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 0 48px rgba(233,30,140,.4);
+}
+
+.hero-name {
+  font-size: clamp(2.6rem, 8vw, 5.5rem);
+  font-weight: 300;
+  letter-spacing: -1px;
+  line-height: 1.05;
+}
+.hero-name span {
+  font-weight: 800;
+  background: linear-gradient(90deg, var(--pink), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-role {
+  margin-top: .6rem;
+  font-size: 1.1rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.hero-location {
+  margin-top: .4rem;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.hero-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .6rem;
+  margin-top: 1.8rem;
+}
+.hero-links a {
+  padding: .45rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: .82rem;
+  background: var(--card);
+  transition: background .2s, border-color .2s, color .2s;
+}
+.hero-links a:hover {
+  background: var(--pink);
+  border-color: var(--pink);
+  color: #fff;
+}
+
+.scroll-hint {
+  margin-top: 2.8rem;
+  color: var(--muted);
+  font-size: .82rem;
+}
+.bounce-arrow {
+  font-size: 1.4rem;
+  animation: bounce 1.7s ease-in-out infinite;
+  margin-top: .25rem;
+}
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(9px)} }
+
+/* ── Section heading ──────────────────────────────────────────────────────── */
+.section-heading {
+  text-align: center;
+  font-size: clamp(1.7rem, 4vw, 2.8rem);
+  font-weight: 700;
+  margin-bottom: 2.5rem;
+}
+.section-heading::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--pink), var(--purple));
+  border-radius: 2px;
+  margin: .55rem auto 0;
+}
+
+/* ── Journey section wrapper ──────────────────────────────────────────────── */
+.journey-section { padding: 5rem 0 4rem; }
+
+/* ═══════════════════════════════════════════
+   DESKTOP: SVG snake path layout
+   ═══════════════════════════════════════════ */
+.journey-wrap {
+  position: relative;
+  /* Aspect ratio matches viewBox 1000 × 1960 */
+  width: 100%;
+  padding-bottom: calc(100% * 1960 / 1000);
+}
+
+.journey-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* faded background track */
+.track-bg { stroke: var(--track); }
+
+/* Milestone cards (desktop, absolutely positioned) */
+.mile-card {
+  position: absolute;
+  width: 30%;
+  min-width: 180px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  border-radius: 14px;
+  padding: 1rem 1.15rem;
+  box-shadow: 0 4px 28px rgba(0,0,0,.18);
+  opacity: .2;
+  transform: translateY(-50%) scale(.95);
+  transition: opacity .45s ease, transform .45s ease, box-shadow .3s;
+  pointer-events: none;
+}
+.mile-card.active {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+  pointer-events: auto;
+  box-shadow: 0 6px 32px rgba(0,0,0,.25);
+}
+.mile-card.active:hover { box-shadow: 0 8px 40px rgba(233,30,140,.18); }
+
+/* card to the RIGHT of the dot (dot on left side of SVG, x < 500) */
+.card-right { transform: translate(4%, -50%) scale(.95); }
+.card-right.active { transform: translate(4%, -50%) scale(1); }
+
+/* card to the LEFT of the dot (dot on right side, x > 500) */
+.card-left { transform: translate(-104%, -50%) scale(.95); }
+.card-left.active { transform: translate(-104%, -50%) scale(1); }
+
+/* ═══════════════════════════════════════════
+   MOBILE: vertical timeline (hidden on desktop)
+   ═══════════════════════════════════════════ */
+.mobile-timeline { display: none; }
+
+/* Shared card typography */
+.mile-year   { display: block; font-size: .72rem; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: .25rem; }
+.mile-title  { font-size: 1rem; font-weight: 700; margin: .1rem 0 .25rem; }
+.mile-sub    { font-size: .8rem; color: var(--muted); }
+.mile-detail { font-size: .78rem; color: var(--muted); margin-top: .45rem; line-height: 1.55; }
+
+.mile-tag {
+  display: inline-block;
+  margin-top: .65rem;
+  padding: .18rem .6rem;
+  border-radius: 999px;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.tag-now       { background: rgba(233, 30,140,.15); color: var(--pink);   }
+.tag-work      { background: rgba(255,152,  0,.15); color: var(--orange); }
+.tag-project   { background: rgba(  0,188,212,.15); color: var(--cyan);   }
+.tag-education { background: rgba(108, 99,255,.15); color: var(--purple); }
+.tag-start     { background: rgba( 76,175, 80,.15); color: var(--green);  }
+
+/* ── Skills ───────────────────────────────────────────────────────────────── */
+.skills-section {
+  padding: 5rem 1.5rem;
+  background: var(--bg2);
+  transition: background .3s;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.skill-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.4rem;
+  transition: transform .2s, box-shadow .2s, background .3s;
+}
+.skill-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(233,30,140,.15);
+}
+.skill-card h4 {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--pink);
+  margin-bottom: .55rem;
+}
+.skill-card p {
+  font-size: .84rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--muted);
+  font-size: .78rem;
+  background: var(--bg);
+  transition: background .3s;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+
+/* Tablets: shrink card widths a little */
+@media (max-width: 900px) {
+  .mile-card { width: 28%; min-width: 160px; }
+}
+
+/* Mobile: hide SVG layout, show vertical timeline */
+@media (max-width: 640px) {
+  .journey-wrap   { display: none; }
+  .mobile-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0 1rem;
+    position: relative;
+  }
+  /* vertical line */
+  .mobile-timeline::before {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--pink), var(--purple));
+    border-radius: 2px;
+    opacity: .35;
+  }
+
+  .mob-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-bottom: 2rem;
+  }
+  .mob-item:last-child { padding-bottom: 0; }
+
+  .mob-dot {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    box-shadow: 0 0 16px rgba(0,0,0,.25);
+    position: relative;
+    z-index: 1;
+  }
+
+  .mob-card {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left-width: 3px;
+    border-radius: 12px;
+    padding: .9rem 1rem;
+    box-shadow: 0 2px 16px rgba(0,0,0,.12);
+  }
+
+  .section-heading { padding: 0 1rem; }
+  .skills-section  { padding: 3.5rem 1rem; }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  .hero-links { gap: .4rem; }
+  .hero-links a { font-size: .75rem; padding: .35rem .8rem; }
+}
