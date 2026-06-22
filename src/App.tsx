@@ -3,31 +3,6 @@ import './App.css'
 import { COMPANIES, COLLEGE_PROJECTS, type Company } from './data'
 import CompanyPage from './CompanyPage'
 
-// ── Journey SVG constants ──────────────────────────────────────────────────────
-const VW = 1000
-const VH = 1200
-const DOTS = [
-  { x: 180, y: 120 },
-  { x: 820, y: 360 },
-  { x: 180, y: 600 },
-  { x: 820, y: 840 },
-  { x: 500, y: 1080 },
-]
-
-const SEGMENT_CP: [number, number, number, number][] = [
-  [920, 60, 100, 280],
-  [60, 300, 940, 520],
-  [920, 540, 80, 760],
-  [680, 900, 320, 1000],
-]
-const PATH_D = (() => {
-  let d = `M ${DOTS[0].x} ${DOTS[0].y}`
-  DOTS.slice(1).forEach((curr, i) => {
-    const [cp1x, cp1y, cp2x, cp2y] = SEGMENT_CP[i]
-    d += ` C ${cp1x} ${cp1y} ${cp2x} ${cp2y} ${curr.x} ${curr.y}`
-  })
-  return d
-})()
 // ── Static data ────────────────────────────────────────────────────────────────
 const ROLES = ['Software Engineer', 'Angular Developer', 'Full Stack Developer', 'React Developer', 'UI Craftsperson', 'Node.JS Developer', 'AI Enuthusiastic', 'Ionic Developer']
 
@@ -243,21 +218,6 @@ function Counter({ value, suffix }: { value: number; suffix: string }) {
 }
 
 // ── Runner ─────────────────────────────────────────────────────────────────────
-function RunnerShape() {
-  return (
-    <>
-      <circle r="32" fill="rgba(233,30,140,0.1)" />
-      <circle cy="-24" r="9" fill="#f4c2a1" />
-      <ellipse cy="-31" rx="9" ry="5" fill="#2c1a0e" />
-      <rect x="-7" y="-15" width="14" height="14" rx="4" fill="#e91e8c" />
-      <line x1="-7" y1="-12" x2="-14" y2="-4" stroke="#f4c2a1" strokeWidth="3" strokeLinecap="round" />
-      <line x1="7" y1="-12" x2="14" y2="-4" stroke="#f4c2a1" strokeWidth="3" strokeLinecap="round" />
-      <line x1="-3" y1="-1" x2="-7" y2="11" stroke="#1a0a00" strokeWidth="3.5" strokeLinecap="round" />
-      <line x1="3" y1="-1" x2="7" y2="11" stroke="#1a0a00" strokeWidth="3.5" strokeLinecap="round" />
-    </>
-  )
-}
-
 // ── Reveal hook ────────────────────────────────────────────────────────────────
 function useReveal(): [React.RefObject<HTMLElement | null>, boolean] {
   const ref = useRef<HTMLElement>(null)
@@ -275,19 +235,14 @@ function useReveal(): [React.RefObject<HTMLElement | null>, boolean] {
 
 // ── App ────────────────────────────────────────────────────────────────────────
 export default function App() {
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
   const [activeCompany, setActiveCompany] = useState<Company | null>(null)
   const [loading, setLoading] = useState(() => !sessionStorage.getItem('ps_loaded'))
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const [navScrolled, setNavScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('')
-  const [progress, setProgress] = useState(0)
-  const [runnerPos, setRunnerPos] = useState({ x: DOTS[0].x, y: DOTS[0].y, angle: 90 })
   const [activeJourneyIdx, setActiveJourneyIdx] = useState(-1)
-  const [mileFracs, setMileFracs] = useState<number[]>([])
-
   const journeyRef = useRef<HTMLDivElement>(null)
-  const svgPathRef = useRef<SVGPathElement>(null)
+  const journeyLineRef = useRef<HTMLDivElement>(null)
   const typed = useTyping(ROLES)
 
   const [aboutRef, aboutVisible] = useReveal()
@@ -317,40 +272,20 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const path = svgPathRef.current; if (!path) return
-    const total = path.getTotalLength()
-    const fracs = DOTS.map(dot => {
-      let best = 0, bestDist = Infinity
-      for (let s = 0; s <= 3000; s++) {
-        const f = s / 3000
-        const pt = path.getPointAtLength(f * total)
-        const d = Math.hypot(pt.x - dot.x, pt.y - dot.y)
-        if (d < bestDist) { bestDist = d; best = f }
-      }
-      return best
-    })
-    setMileFracs(fracs)
-  }, [])
-
-  useEffect(() => {
     const fn = () => {
-      const journey = journeyRef.current, path = svgPathRef.current
-      if (!journey || !path) return
-      const rect = journey.getBoundingClientRect()
-      // 0 when top of wrap enters viewport, 1 when bottom leaves viewport
-      const raw = (window.innerHeight - rect.top) / (rect.height + window.innerHeight * 0.2)
-      const p = Math.max(0, Math.min(1, raw))
-      setProgress(p)
-      const total = path.getTotalLength(), len = p * total
-      const pt = path.getPointAtLength(len)
-      const pt2 = path.getPointAtLength(Math.min(len + 12, total))
-      setRunnerPos({ x: pt.x, y: pt.y, angle: Math.atan2(pt2.y - pt.y, pt2.x - pt.x) * 180 / Math.PI })
-      if (mileFracs.length) setActiveJourneyIdx(Math.max(-1, mileFracs.filter(f => p >= f - 0.01).length - 1))
+      const wrap = journeyRef.current, line = journeyLineRef.current
+      if (!wrap || !line) return
+      const rect = wrap.getBoundingClientRect()
+      const p = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / rect.height))
+      line.style.transform = `scaleY(${p})`
+      // activate milestone when its fraction of the timeline has been passed
+      const step = 1 / JOURNEY.length
+      setActiveJourneyIdx(Math.min(JOURNEY.length - 1, Math.floor(p / step) - 1 + (p > 0.05 ? 1 : 0)))
     }
     window.addEventListener('scroll', fn, { passive: true })
     fn()
     return () => window.removeEventListener('scroll', fn)
-  }, [mileFracs])
+  }, [])
 
   useEffect(() => {
     if (!loading) return
@@ -528,105 +463,43 @@ export default function App() {
           <h2 className="section-heading">My Journey</h2>
           <p className="section-sub">From student to engineer — the road so far</p>
 
-          <div className="journey-wrap" ref={journeyRef}>
-            <svg className="journey-svg" viewBox={`0 0 ${VW} ${VH}`} preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <defs>
-                <linearGradient id="pathGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#e91e8c" />
-                  <stop offset="50%" stopColor="#a855f7" />
-                  <stop offset="100%" stopColor="#6c63ff" />
-                </linearGradient>
-                <filter id="glowWide" x="-80%" y="-80%" width="260%" height="260%">
-                  <feGaussianBlur stdDeviation="18" result="blur" />
-                  <feMerge><feMergeNode in="blur" /></feMerge>
-                </filter>
-                <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
-                  <feGaussianBlur stdDeviation="7" result="blur" />
-                  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
-                <filter id="glowDot" x="-100%" y="-100%" width="300%" height="300%">
-                  <feGaussianBlur stdDeviation="10" result="blur" />
-                  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                </filter>
-              </defs>
-              {/* Wide soft halo behind active path */}
-              {/* Outer halo — grows brighter and wider as progress increases */}
-              <path d={PATH_D} fill="none" stroke="url(#pathGrad)" strokeWidth={24 + progress * 24} strokeLinecap="round" pathLength="1" strokeDasharray="1" strokeDashoffset={`${1 - progress}`} filter="url(#glowWide)" opacity={0.18 + progress * 0.42} />
-              <path d={PATH_D} fill="none" className="track-bg" strokeWidth="8" strokeLinecap="round" />
-              <path ref={svgPathRef} d={PATH_D} fill="none" stroke="url(#pathGrad)" strokeWidth={6 + progress * 4} strokeLinecap="round" pathLength="1" strokeDasharray="1" strokeDashoffset={`${1 - progress}`} filter="url(#glow)" className="active-path" />
-              {/* Moving light dot just ahead of runner */}
-              <path d={PATH_D} fill="none" stroke="white" strokeWidth="6" strokeLinecap="round" pathLength="1" strokeDasharray="0.04 0.96" strokeDashoffset={`${1 - Math.max(0, progress - 0.03)}`} opacity="0.85" />
-              {DOTS.map((dot, i) => {
-                const m = JOURNEY[i], active = activeJourneyIdx >= i
-                return (
-                  <g key={i}>
-                    {active && !isMobile && (
-                      <>
-                        <circle cx={dot.x} cy={dot.y} r="38" fill="none" stroke={m.color} strokeWidth="2" opacity="0.6">
-                          <animate attributeName="r" values="38;60;38" dur="2s" repeatCount="indefinite" />
-                          <animate attributeName="opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite" />
-                        </circle>
-                        <circle cx={dot.x} cy={dot.y} r="38" fill="none" stroke={m.color} strokeWidth="2" opacity="0.4">
-                          <animate attributeName="r" values="38;60;38" dur="2s" begin="0.7s" repeatCount="indefinite" />
-                          <animate attributeName="opacity" values="0.4;0;0.4" dur="2s" begin="0.7s" repeatCount="indefinite" />
-                        </circle>
-                      </>
-                    )}
-                    <circle cx={dot.x} cy={dot.y} r={active ? 32 : 22} fill={m.color} opacity={active ? 1 : 0.2} filter={active ? 'url(#glowDot)' : undefined} style={{ transition: 'r .4s, opacity .4s' }} />
-                    <text x={dot.x} y={dot.y + 10} textAnchor="middle" fontSize="26" style={{ userSelect: 'none' }}>{m.icon}</text>
-                  </g>
-                )
-              })}
-              <g transform={`translate(${runnerPos.x},${runnerPos.y}) rotate(${runnerPos.angle - 90})`} filter="url(#glow)">
-                <RunnerShape />
-              </g>
-            </svg>
+          <div className="timeline" ref={journeyRef}>
+            {/* Spine */}
+            <div className="tl-spine-track">
+              <div className="tl-spine-fill" ref={journeyLineRef} />
+            </div>
 
-            {DOTS.map((dot, i) => {
-              const m = JOURNEY[i], active = activeJourneyIdx >= i, onLeft = dot.x < VW / 2
+            {JOURNEY.map((m, i) => {
+              const active = activeJourneyIdx >= i
+              const side = i % 2 === 0 ? 'tl-left' : 'tl-right'
               return (
-                <div key={i} className={`mile-card ${onLeft ? 'card-right' : 'card-left'} ${active ? 'active' : ''}`} style={{ left: `${(dot.x / VW) * 100}%`, top: `${(dot.y / VH) * 100}%`, borderColor: m.color }}>
-                  <span className="mile-year" style={{ color: m.color }}>{m.year}</span>
-                  <h3 className="mile-title">{m.title}</h3>
-                  <p className="mile-sub">{m.subtitle}</p>
-                  <p className="mile-detail">{m.detail}</p>
-                  <span className={`mile-tag tag-${m.type}`}>{m.type}</span>
-                  {m.projects.length > 0 && (
-                    <div className="mile-projects">
-                      {m.projects.map(p => (
-                        <span key={p.name} className="mile-proj-tag" style={{ '--proj-color': m.color } as React.CSSProperties} title={p.desc}>
-                          {p.icon} {p.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                <div key={i} className={`tl-item ${side} ${active ? 'tl-active' : ''}`}>
+                  {/* Dot on the spine */}
+                  <div className="tl-dot" style={{ background: active ? m.color : 'var(--bg3)', borderColor: m.color, boxShadow: active ? `0 0 18px ${m.color}88` : 'none' }}>
+                    <span className="tl-dot-icon">{m.icon}</span>
+                  </div>
+
+                  {/* Card */}
+                  <div className="tl-card" style={{ borderColor: m.color }}>
+                    <div className="tl-card-bar" style={{ background: m.color }} />
+                    <span className="tl-year" style={{ color: m.color }}>{m.year}</span>
+                    <h3 className="tl-title">{m.title}</h3>
+                    <p className="tl-sub">{m.subtitle}</p>
+                    <p className="tl-detail">{m.detail}</p>
+                    <span className={`mile-tag tag-${m.type}`}>{m.type}</span>
+                    {m.projects.length > 0 && (
+                      <div className="mile-projects">
+                        {m.projects.map(p => (
+                          <span key={p.name} className="mile-proj-tag" style={{ '--proj-color': m.color } as React.CSSProperties} title={p.desc}>
+                            {p.icon} {p.name}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )
             })}
-          </div>
-
-          <div className="mobile-timeline">
-            {JOURNEY.map((m, i) => (
-              <div key={i} className="mob-item">
-                <div className="mob-dot" style={{ background: m.color }}><span>{m.icon}</span></div>
-                <div className="mob-card" style={{ borderColor: m.color }}>
-                  <span className="mile-year" style={{ color: m.color }}>{m.year}</span>
-                  <h3 className="mile-title">{m.title}</h3>
-                  <p className="mile-sub">{m.subtitle}</p>
-                  <p className="mile-detail">{m.detail}</p>
-                  <span className={`mile-tag tag-${m.type}`}>{m.type}</span>
-                  {m.projects.length > 0 && (
-                    <div className="mile-projects">
-                      {m.projects.map(p => (
-                        <span key={p.name} className="mile-proj-tag" style={{ '--proj-color': m.color } as React.CSSProperties}>
-                          {p.icon} {p.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
           </div>
         </section>
 

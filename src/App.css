@@ -464,41 +464,107 @@ body {
 }
 .stat-label { display: block; font-size: .77rem; color: var(--muted); margin-top: .4rem; letter-spacing: .5px; }
 
-/* ── Journey ───────────────────────────────────────────────────────────────── */
-.journey-section { padding: 6rem 0 4rem; }
+/* ── Journey — vertical timeline ────────────────────────────────────────────── */
+.journey-section { padding: 6rem 5vw 5rem; }
 .journey-section .section-sub { margin-top: .25rem; }
 
-/* aspect-ratio: 1000/1200 */
-.journey-wrap {
-  position: relative; width: 100%;
-  padding-bottom: calc(100% * 1200 / 1000);
+@keyframes dotPop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  70%  { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
 }
-.journey-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.track-bg { stroke: var(--track); }
-
-.mile-card {
-  position: absolute; width: 26%; min-width: 165px;
-  background: var(--card); border: 1px solid var(--border); border-left-width: 3px;
-  border-radius: 12px; padding: .9rem 1.1rem;
-  box-shadow: var(--shadow);
-  opacity: .12; pointer-events: none;
-  transition: opacity .5s, transform .5s, box-shadow .3s, border-color .3s;
+@keyframes cardSlideLeft {
+  from { opacity: 0; transform: translateX(-32px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
-.mile-card.active { opacity: 1; pointer-events: auto; }
-.mile-card.active:hover {
-  box-shadow: 0 8px 40px rgba(233,30,140,.18);
-  transform: var(--card-transform, translateY(-50%)) !important;
+@keyframes cardSlideRight {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
-.card-right { transform: translate(5%, -50%) scale(.93); }
-.card-right.active { transform: translate(5%, -50%) scale(1); --card-transform: translate(5%,-54%) scale(1.02); }
-.card-left  { transform: translate(-105%, -50%) scale(.93); }
-.card-left.active  { transform: translate(-105%, -50%) scale(1); --card-transform: translate(-105%,-54%) scale(1.02); }
+.timeline {
+  position: relative; max-width: 900px; margin: 3rem auto 0;
+  display: flex; flex-direction: column; gap: 0;
+}
 
-.mile-year   { display: block; font-size: .68rem; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: .2rem; }
-.mile-title  { font-size: .95rem; font-weight: 700; margin: .1rem 0 .2rem; }
-.mile-sub    { font-size: .78rem; color: var(--muted); }
-.mile-detail { font-size: .74rem; color: var(--muted); margin-top: .4rem; line-height: 1.55; }
+/* Spine track */
+.tl-spine-track {
+  position: absolute; left: 50%; top: 0; bottom: 0;
+  width: 4px; transform: translateX(-50%);
+  background: var(--track); border-radius: 2px; overflow: hidden;
+}
+.tl-spine-fill {
+  width: 100%; height: 100%;
+  background: linear-gradient(180deg, #e91e8c, #a855f7 50%, #6c63ff);
+  transform: scaleY(0); transform-origin: top; border-radius: 2px;
+  transition: transform .15s linear;
+}
+
+/* Each row */
+.tl-item {
+  display: grid; grid-template-columns: 1fr 60px 1fr;
+  align-items: start; gap: 0; min-height: 120px;
+  padding: 1.5rem 0;
+}
+
+/* Dot in the center column */
+.tl-dot {
+  grid-column: 2; justify-self: center; align-self: start; margin-top: .25rem;
+  width: 52px; height: 52px; border-radius: 50%;
+  border: 3px solid transparent;
+  display: flex; align-items: center; justify-content: center;
+  transition: box-shadow .4s, background .4s, transform .3s;
+  position: relative; z-index: 2;
+}
+.tl-active .tl-dot {
+  animation: dotPop .45s cubic-bezier(.34,1.56,.64,1) both;
+}
+.tl-dot-icon { font-size: 1.4rem; line-height: 1; }
+
+/* Card: left side (even items) */
+.tl-left .tl-card {
+  grid-column: 1; justify-self: end; text-align: right;
+  animation: none; opacity: 0; transform: translateX(-32px);
+}
+.tl-left.tl-active .tl-card {
+  animation: cardSlideLeft .45s .1s ease both;
+  opacity: 1; transform: translateX(0);
+}
+
+/* Card: right side (odd items) */
+.tl-right .tl-card {
+  grid-column: 3; justify-self: start; text-align: left;
+  animation: none; opacity: 0; transform: translateX(32px);
+}
+.tl-right.tl-active .tl-card {
+  animation: cardSlideRight .45s .1s ease both;
+  opacity: 1; transform: translateX(0);
+}
+
+/* Empty column on opposite side */
+.tl-left  > *:not(.tl-card):not(.tl-dot) { grid-column: 3; }
+.tl-right > *:not(.tl-card):not(.tl-dot) { grid-column: 1; }
+
+/* Card styling */
+.tl-card {
+  width: calc(100% - 2rem); max-width: 340px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.1rem 1.3rem;
+  box-shadow: var(--shadow); position: relative; overflow: hidden;
+  transition: transform .25s, box-shadow .25s;
+}
+.tl-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,.3); }
+.tl-card-bar {
+  position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 16px 16px 0 0;
+}
+.tl-left .tl-card-bar { left: auto; width: 100%; }
+
+.tl-year   { display: block; font-size: .68rem; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: .3rem; }
+.tl-title  { font-size: 1rem; font-weight: 700; margin: .1rem 0 .2rem; color: var(--text); }
+.tl-sub    { font-size: .8rem; color: var(--muted); }
+.tl-detail { font-size: .76rem; color: var(--muted); margin-top: .4rem; line-height: 1.6; }
+
+/* Shared tags (reused classes) */
 .mile-tag {
   display: inline-block; margin-top: .55rem;
   padding: .15rem .55rem; border-radius: 999px;
@@ -511,24 +577,20 @@ body {
 .tag-start     { background: rgba( 76,175, 80,.14); color: var(--green);  }
 .tag-milestone { background: rgba(168, 85,247,.14); color: #a855f7; }
 
-.mile-projects {
-  display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .6rem;
-}
+.mile-projects { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .65rem; }
+.tl-left .mile-projects { justify-content: flex-end; }
+
 .mile-proj-tag {
-  font-size: .65rem; padding: .2rem .5rem; border-radius: 20px;
+  font-size: .68rem; padding: .22rem .55rem; border-radius: 20px;
   background: color-mix(in srgb, var(--proj-color, #6c63ff) 14%, transparent);
   color: var(--proj-color, #6c63ff);
   border: 1px solid color-mix(in srgb, var(--proj-color, #6c63ff) 30%, transparent);
-  cursor: default; transition: transform .2s, background .2s;
-  white-space: nowrap;
+  cursor: default; transition: transform .2s, background .2s; white-space: nowrap;
 }
-.mile-card:hover .mile-proj-tag,
-.mile-card.active .mile-proj-tag:hover {
+.mile-proj-tag:hover {
   transform: scale(1.05);
   background: color-mix(in srgb, var(--proj-color, #6c63ff) 24%, transparent);
 }
-
-.mobile-timeline { display: none; }
 
 /* ── Projects ──────────────────────────────────────────────────────────────── */
 /* ── Experience cards ────────────────────────────────────────────────────── */
@@ -727,7 +789,6 @@ body {
   .left-heading::after { margin: .5rem auto 0; }
   .about-chips { justify-content: center; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .mile-card { width: 24%; min-width: 150px; }
 }
 
 @media (max-width: 640px) {
@@ -736,38 +797,21 @@ body {
   .hero-section { padding: 5rem 1.2rem 2rem; }
   .hero-name { font-size: 3rem; }
 
-  .journey-wrap    { display: none; }
-  .mobile-timeline {
-    display: flex; flex-direction: column;
-    padding: 0 1.2rem; position: relative;
+  /* Timeline: collapse to single column (dot left, card right) */
+  .timeline { padding: 0 1rem; }
+  .tl-spine-track { left: 26px; transform: none; }
+  .tl-item { grid-template-columns: 52px 1fr; gap: 1rem; padding: 1rem 0; }
+  .tl-dot  { grid-column: 1; width: 44px; height: 44px; }
+  .tl-dot-icon { font-size: 1.2rem; }
+  .tl-left .tl-card, .tl-right .tl-card {
+    grid-column: 2; justify-self: stretch; text-align: left; max-width: 100%; width: 100%;
+    animation: cardSlideRight .4s .1s ease both !important;
   }
-  .mobile-timeline::before {
-    content: ''; position: absolute;
-    left: 28px; top: 0; bottom: 0; width: 3px;
-    background: linear-gradient(180deg, var(--pink), var(--purple));
-    border-radius: 2px; opacity: .28;
-  }
-  .mob-item { display: flex; align-items: flex-start; gap: 1rem; padding-bottom: 2rem; }
-  .mob-dot {
-    flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.1rem; position: relative; z-index: 1;
-    box-shadow: 0 0 16px rgba(0,0,0,.25);
-    transition: transform .2s;
-  }
-  .mob-dot:hover { transform: scale(1.1); }
-  .mob-card {
-    flex: 1; background: var(--card);
-    border: 1px solid var(--border); border-left-width: 3px;
-    border-radius: 12px; padding: .9rem 1rem;
-    box-shadow: var(--shadow);
-    transition: transform .2s, box-shadow .2s;
-  }
-  .mob-card:hover { transform: translateX(4px); }
+  .tl-left .mile-projects { justify-content: flex-start; }
 
   .about-section,.contact-section { padding: 4.5rem 1.2rem; }
   .projects-section,.skills-section { padding: 4rem 1.2rem; }
-  .journey-section { padding: 4rem 0 3rem; }
+  .journey-section { padding: 4rem 1.2rem 3rem; }
   .stats-section { padding: 1.5rem 1.2rem 2.5rem; }
 
   .projects-grid,.skills-groups { grid-template-columns: 1fr; }
