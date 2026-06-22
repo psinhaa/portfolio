@@ -456,10 +456,10 @@ body {
 .journey-section { padding: 6rem 0 4rem; }
 .journey-section .section-sub { margin-top: .25rem; }
 
-/* aspect-ratio: 1000/1520 */
+/* aspect-ratio: 1000/1200 */
 .journey-wrap {
   position: relative; width: 100%;
-  padding-bottom: calc(100% * 1520 / 1000);
+  padding-bottom: calc(100% * 1200 / 1000);
 }
 .journey-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .track-bg { stroke: var(--track); }
@@ -497,6 +497,24 @@ body {
 .tag-project   { background: rgba(  0,188,212,.14); color: var(--cyan);   }
 .tag-education { background: rgba(108, 99,255,.14); color: var(--purple); }
 .tag-start     { background: rgba( 76,175, 80,.14); color: var(--green);  }
+.tag-milestone { background: rgba(168, 85,247,.14); color: #a855f7; }
+
+.mile-projects {
+  display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .6rem;
+}
+.mile-proj-tag {
+  font-size: .65rem; padding: .2rem .5rem; border-radius: 20px;
+  background: color-mix(in srgb, var(--proj-color, #6c63ff) 14%, transparent);
+  color: var(--proj-color, #6c63ff);
+  border: 1px solid color-mix(in srgb, var(--proj-color, #6c63ff) 30%, transparent);
+  cursor: default; transition: transform .2s, background .2s;
+  white-space: nowrap;
+}
+.mile-card:hover .mile-proj-tag,
+.mile-card.active .mile-proj-tag:hover {
+  transform: scale(1.05);
+  background: color-mix(in srgb, var(--proj-color, #6c63ff) 24%, transparent);
+}
 
 .mobile-timeline { display: none; }
 

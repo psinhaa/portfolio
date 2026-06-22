@@ -3,30 +3,22 @@ import { useNavigate } from 'react-router-dom'
 import './App.css'
 import { COMPANIES, COLLEGE_PROJECTS } from './data'
 
-// ── Journey SVG constants (shorter + more curvy) ───────────────────────────────
+// ── Journey SVG constants ──────────────────────────────────────────────────────
 const VW = 1000
-const VH = 1520
+const VH = 1200
 const DOTS = [
-  { x: 180, y: 100 },
-  { x: 820, y: 300 },
-  { x: 180, y: 500 },
-  { x: 820, y: 700 },
-  { x: 180, y: 900 },
-  { x: 820, y: 1100 },
-  { x: 180, y: 1300 },
-  { x: 500, y: 1450 },
+  { x: 180, y: 120 },
+  { x: 820, y: 360 },
+  { x: 180, y: 600 },
+  { x: 820, y: 840 },
+  { x: 500, y: 1080 },
 ]
 
-
-// Organic path — each segment has unique control points for a winding-road feel
 const SEGMENT_CP: [number, number, number, number][] = [
-  [920,  60,   80,  330],
-  [ 50, 270,  950,  530],
-  [900, 460,  100,  740],
-  [ 30, 660,  970,  950],
-  [880, 860,  120, 1140],
-  [ 60,1060,  940, 1340],
-  [240,1420,  760, 1330],
+  [920,  60,  100, 280],
+  [ 60, 300,  940, 520],
+  [920, 540,   80, 760],
+  [680, 900,  320, 1000],
 ]
 const PATH_D = (() => {
   let d = `M ${DOTS[0].x} ${DOTS[0].y}`
@@ -74,14 +66,36 @@ const SKILL_GROUPS = [
 ]
 
 const JOURNEY = [
-  { year: 'Mar 2023–Present', type: 'now',       title: 'Software Engineer',       subtitle: 'Squint Metrics · Gurugram/Remote', detail: 'Pixel-perfect UIs with Angular, Ionic & React. Close collaboration with UX/UI designers.', icon: '🚀', color: '#e91e8c' },
-  { year: '2023',             type: 'project',    title: 'Project — NeuroSum',      subtitle: 'Healthcare Tracker',              detail: 'Track health, performance & symptoms with Angular.', icon: '🧠', color: '#00bcd4' },
-  { year: '2022',             type: 'project',    title: 'Project — Kart',          subtitle: 'E-Commerce App',                  detail: 'REST APIs, auth, cart & checkout with MongoDB.', icon: '🛒', color: '#00bcd4' },
-  { year: '2022',             type: 'project',    title: 'Project — Board',         subtitle: 'News Feed Website',               detail: 'Bootstrap + JS + Flipboard RSS API integration.', icon: '📰', color: '#00bcd4' },
-  { year: 'Mar 2021–Mar 2023',type: 'work',       title: 'Junior Software Engineer',subtitle: 'In Time Tec · Jaipur',            detail: 'Enhanced end-user application subsystems; assisted debugging.', icon: '💼', color: '#ff9800' },
-  { year: 'Jul 2021',         type: 'education',  title: 'Graduated B.Tech',        subtitle: 'Rajasthan Technical University',  detail: '85.60% — Electronics & Communication.', icon: '🏆', color: '#6c63ff' },
-  { year: 'Aug 2017',         type: 'education',  title: 'Started B.Tech',          subtitle: 'RTU · Jaipur',                   detail: 'Electronics & Communication Engineering.', icon: '🎓', color: '#6c63ff' },
-  { year: '✦ Origin',         type: 'start',      title: 'The Beginning',           subtitle: 'Rajasthan, India',               detail: 'Every great journey starts with a single step.', icon: '🌱', color: '#4caf50' },
+  {
+    year: 'Aug 2017 – Jul 2021', type: 'education', title: 'B.Tech — Electronics & Communication',
+    subtitle: 'SKIT, Jaipur · RTU', detail: '85.60% · Swami Keshvanand Institute of Technology.',
+    icon: '🎓', color: '#6c63ff',
+    projects: [{ icon: '🛒', name: 'Kart', desc: 'Full-stack e-commerce' }, { icon: '📰', name: 'Board', desc: 'Flipboard news feed' }],
+  },
+  {
+    year: 'Mar 2021 – Mar 2023', type: 'work', title: 'Software Engineer',
+    subtitle: 'In Time Tec · Remote', detail: 'Front-end & Python development for US-based clients across healthcare and non-profit sectors.',
+    icon: '💻', color: '#ff9800',
+    projects: [{ icon: '🌱', name: 'AEYC-IDAHO', desc: 'Non-profit membership portal' }, { icon: '🖨️', name: 'AHA 3D Printer', desc: 'Python hardware controller' }],
+  },
+  {
+    year: 'Mar 2023 – Present', type: 'now', title: 'Software Engineer',
+    subtitle: 'Squint Metrics · Gurugram / Remote', detail: 'Pixel-perfect UIs with Angular, Ionic & React. Close collaboration with UX/UI designers.',
+    icon: '🚀', color: '#e91e8c',
+    projects: [{ icon: '🧠', name: 'NeuroSum', desc: 'Healthcare symptom tracker' }, { icon: '🏟️', name: 'Venue Advantage', desc: 'Sports sponsorship platform' }],
+  },
+  {
+    year: '2024 – Now', type: 'milestone', title: 'Current Focus',
+    subtitle: 'Full Stack · AI Integration', detail: 'Shipping Venue Advantage and exploring AI-powered product features.',
+    icon: '⚡', color: '#a855f7',
+    projects: [],
+  },
+  {
+    year: 'Future', type: 'start', title: 'Next Chapter',
+    subtitle: 'Open to Opportunities', detail: 'Looking for roles that combine great engineering culture with impactful products.',
+    icon: '🌟', color: '#00bcd4',
+    projects: [],
+  },
 ]
 
 const NAV_LINKS = ['About', 'Journey', 'Experience', 'Skills', 'Contact']
@@ -263,7 +277,7 @@ function useReveal(): [React.RefObject<HTMLElement | null>, boolean] {
 export default function App() {
   const navigate = useNavigate()
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(() => !sessionStorage.getItem('ps_loaded'))
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const [navScrolled, setNavScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('')
@@ -339,9 +353,13 @@ export default function App() {
   }, [mileFracs])
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 2200)
+    if (!loading) return
+    const t = setTimeout(() => {
+      setLoading(false)
+      sessionStorage.setItem('ps_loaded', '1')
+    }, 2200)
     return () => clearTimeout(t)
-  }, [])
+  }, [loading])
 
   const scrollTo = (id: string) => {
     const target = id.toLowerCase() === 'experience' ? 'projects' : id.toLowerCase()
@@ -568,6 +586,15 @@ export default function App() {
                 <p className="mile-sub">{m.subtitle}</p>
                 <p className="mile-detail">{m.detail}</p>
                 <span className={`mile-tag tag-${m.type}`}>{m.type}</span>
+                {m.projects.length > 0 && (
+                  <div className="mile-projects">
+                    {m.projects.map(p => (
+                      <span key={p.name} className="mile-proj-tag" style={{ '--proj-color': m.color } as React.CSSProperties} title={p.desc}>
+                        {p.icon} {p.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             )
           })}
@@ -583,6 +610,15 @@ export default function App() {
                 <p className="mile-sub">{m.subtitle}</p>
                 <p className="mile-detail">{m.detail}</p>
                 <span className={`mile-tag tag-${m.type}`}>{m.type}</span>
+                {m.projects.length > 0 && (
+                  <div className="mile-projects">
+                    {m.projects.map(p => (
+                      <span key={p.name} className="mile-proj-tag" style={{ '--proj-color': m.color } as React.CSSProperties}>
+                        {p.icon} {p.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           ))}
