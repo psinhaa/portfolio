@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './App.css'
+import { COMPANIES, COLLEGE_PROJECTS } from './data'
 
 // ── Journey SVG constants (shorter + more curvy) ───────────────────────────────
 const VW = 1000
@@ -63,12 +65,6 @@ const TERMINAL_LINES = [
   { text: 'c1g5d  feat: Kart e-commerce platform', type: 'git' },
 ]
 
-const PROJECTS = [
-  { name: 'Venue Advantage', emoji: '🏟️', tagline: 'Sports sponsorship & advertising platform', description: 'First-of-its-kind cloud-based platform that streamlines the organisation and sales of live entertainment advertising and sponsorship opportunities — starting with college sports venues. Features 3D venue visualisation, sponsorship asset marketplace, and pricing optimisation tools.', tech: ['React', 'TypeScript', 'Node.js', 'Cloud', 'REST API'], color: '#ff9800', link: 'https://www.venue-advantage.com/', type: 'Current · Dec 2024', badge: '🟢 Active' },
-  // { name: 'NeuroSum', emoji: '🧠', tagline: 'Healthcare companion app', description: 'Integrates essential features to track health metrics, monitor performance, record symptoms and document attacks — providing invaluable insights for healthcare providers.', tech: ['Angular', 'TypeScript', 'HTML5', 'CSS3', 'RxJS'], color: '#00bcd4', link: 'https://github.com/psinhaa', type: 'Healthcare' },
-  { name: 'Kart', emoji: '🛒', tagline: 'Full-stack e-commerce platform', description: 'Complete REST API suite — authentication, shopping cart, checkout flow, and responsive UI built on MongoDB for scalable data storage.', tech: ['Node.js', 'Express.js', 'MongoDB', 'REST API', 'JavaScript'], color: '#e91e8c', link: 'https://github.com/psinhaa', type: 'Full-Stack' },
-  { name: 'Board', emoji: '📰', tagline: 'Curated news feed from Flipboard', description: 'A news aggregation website featuring the latest articles on selected topics. Interactive accordions, image carousels and Flipboard RSS API integration.', tech: ['HTML5', 'CSS3', 'Bootstrap', 'JavaScript', 'REST API'], color: '#6c63ff', link: 'https://github.com/psinhaa', type: 'Frontend' },
-]
 
 const SKILL_GROUPS = [
   { label: 'Languages', icon: '{ }', color: '#e91e8c', skills: ['JavaScript', 'TypeScript', 'Python', 'C/C++'] },
@@ -88,7 +84,7 @@ const JOURNEY = [
   { year: '✦ Origin',         type: 'start',      title: 'The Beginning',           subtitle: 'Rajasthan, India',               detail: 'Every great journey starts with a single step.', icon: '🌱', color: '#4caf50' },
 ]
 
-const NAV_LINKS = ['About', 'Journey', 'Projects', 'Skills', 'Contact']
+const NAV_LINKS = ['About', 'Journey', 'Experience', 'Skills', 'Contact']
 
 // ── Canvas particle network ────────────────────────────────────────────────────
 function ParticleField({ theme }: { theme: string }) {
@@ -265,6 +261,7 @@ function useReveal(): [React.RefObject<HTMLElement | null>, boolean] {
 
 // ── App ────────────────────────────────────────────────────────────────────────
 export default function App() {
+  const navigate = useNavigate()
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
   const [loading, setLoading] = useState(true)
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
@@ -346,7 +343,10 @@ export default function App() {
     return () => clearTimeout(t)
   }, [])
 
-  const scrollTo = (id: string) => document.getElementById(id.toLowerCase())?.scrollIntoView({ behavior: 'smooth' })
+  const scrollTo = (id: string) => {
+    const target = id.toLowerCase() === 'experience' ? 'projects' : id.toLowerCase()
+    document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
+  }
   const year = new Date().getFullYear()
 
   return (
@@ -589,23 +589,49 @@ export default function App() {
         </div>
       </section>
 
-      {/* ── Projects ── */}
+      {/* ── Experience ── */}
       <section id="projects" className={`projects-section reveal ${projVisible ? 'revealed' : ''}`} ref={projRef}>
         <div className="section-orbs" aria-hidden="true">
           <div className="orb" style={{ width:550,height:550,background:'#6c63ff',top:'-15%',right:'-8%',animation:'orbFloat2 17s ease-in-out infinite' }} />
           <div className="orb" style={{ width:350,height:350,background:'#ff9800',bottom:'-10%',left:'5%',animation:'orbFloat3 22s ease-in-out infinite' }} />
         </div>
-        <h2 className="section-heading">Projects</h2>
-        <p className="section-sub">Things I've built from scratch</p>
+        <h2 className="section-heading">Experience</h2>
+        <p className="section-sub">Companies I've worked at — click to explore projects</p>
+
+        <div className="exp-cards">
+          {COMPANIES.map(c => (
+            <div key={c.id} className="exp-card" style={{ '--accent': c.color } as React.CSSProperties} onClick={() => navigate(`/company/${c.id}`)}>
+              <div className="exp-glow" style={{ background: `linear-gradient(135deg, ${c.color}, ${c.accent})` }} />
+              <div className="exp-top">
+                <div className="exp-logo" style={{ background: `linear-gradient(135deg, ${c.color}, ${c.accent})` }}>{c.logo}</div>
+                <div>
+                  <h3 className="exp-name">{c.name}</h3>
+                  <p className="exp-role">{c.role}</p>
+                  <p className="exp-period">{c.period} · {c.location}</p>
+                </div>
+              </div>
+              <div className="exp-proj-preview">
+                {c.projects.map(p => (
+                  <span key={p.name} className="exp-proj-tag" style={{ '--chip-color': p.color } as React.CSSProperties}>
+                    {p.emoji} {p.name}
+                  </span>
+                ))}
+              </div>
+              <div className="exp-cta">View details &amp; projects →</div>
+            </div>
+          ))}
+        </div>
+
+        <h2 className="section-heading" style={{ marginTop: '4rem' }}>College Projects</h2>
+        <p className="section-sub">Built during B.Tech at SKIT</p>
         <div className="projects-grid">
-          {PROJECTS.map(p => (
-            <div key={p.name} className={`project-card ${p.badge ? 'card-active' : ''}`} style={{ '--accent': p.color } as React.CSSProperties}>
+          {COLLEGE_PROJECTS.map(p => (
+            <div key={p.name} className="project-card" style={{ '--accent': p.color } as React.CSSProperties}>
               <div className="project-glow" style={{ background: p.color }} />
               <div className="project-header">
                 <span className="project-emoji">{p.emoji}</span>
                 <div className="project-badges">
-                  {p.badge && <span className="project-live-badge">{p.badge}</span>}
-                  <span className="project-type-badge">{p.type}</span>
+                  <span className="project-type-badge">College · Minor Project</span>
                 </div>
               </div>
               <h3 className="project-name">{p.name}</h3>
@@ -614,9 +640,7 @@ export default function App() {
               <div className="tech-chips">
                 {p.tech.map(t => <span key={t} className="tech-chip">{t}</span>)}
               </div>
-              <a href={p.link} target="_blank" rel="noreferrer" className="proj-link">
-                {p.badge ? '🌐 Visit Website →' : '⌥ View on GitHub →'}
-              </a>
+              <a href={p.link} target="_blank" rel="noreferrer" className="proj-link">⌥ View on GitHub →</a>
             </div>
           ))}
         </div>

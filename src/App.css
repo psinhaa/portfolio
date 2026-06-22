@@ -501,6 +501,52 @@ body {
 .mobile-timeline { display: none; }
 
 /* ── Projects ──────────────────────────────────────────────────────────────── */
+/* ── Experience cards ────────────────────────────────────────────────────── */
+.exp-cards {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem; max-width: 1060px; margin: 0 auto 1rem;
+}
+.exp-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 18px; padding: 1.8rem;
+  cursor: pointer; position: relative; overflow: hidden;
+  display: flex; flex-direction: column; gap: 1rem;
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+}
+.exp-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 48px rgba(0,0,0,.4);
+  border-color: var(--accent, var(--pink));
+}
+.exp-glow {
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  transition: height .3s;
+}
+.exp-card:hover .exp-glow { height: 6px; }
+
+.exp-top { display: flex; align-items: flex-start; gap: 1rem; }
+.exp-logo {
+  width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+}
+.exp-name { font-size: 1.2rem; font-weight: 800; color: var(--text); }
+.exp-role { font-size: .85rem; color: var(--muted); margin-top: .15rem; }
+.exp-period { font-size: .78rem; color: var(--muted); margin-top: .1rem; opacity: .7; }
+
+.exp-proj-preview { display: flex; flex-wrap: wrap; gap: .5rem; }
+.exp-proj-tag {
+  font-size: .78rem; padding: .25rem .7rem; border-radius: 20px;
+  background: color-mix(in srgb, var(--chip-color, #6c63ff) 12%, transparent);
+  color: var(--chip-color, #6c63ff);
+  border: 1px solid color-mix(in srgb, var(--chip-color, #6c63ff) 28%, transparent);
+}
+.exp-cta {
+  font-size: .82rem; color: var(--muted);
+  font-weight: 600; letter-spacing: .02em;
+  transition: color .2s;
+}
+.exp-card:hover .exp-cta { color: var(--accent, var(--pink)); }
+
 .projects-section { padding: 6rem 5vw; background: var(--bg2); transition: background .35s; }
 .projects-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
