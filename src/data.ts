@@ -72,7 +72,7 @@ export const COMPANIES: Company[] = [
     name: 'In Time Tec',
     role: 'Software Engineer',
     period: 'Mar 2021 – Mar 2023',
-    location: 'Remote',
+    location: 'Jaipur',
     color: '#6c63ff',
     accent: '#00bcd4',
     logo: '💻',
