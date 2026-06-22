@@ -266,6 +266,7 @@ function useReveal(): [React.RefObject<HTMLElement | null>, boolean] {
 // ── App ────────────────────────────────────────────────────────────────────────
 export default function App() {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
+  const [loading, setLoading] = useState(true)
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const [navScrolled, setNavScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('')
@@ -340,11 +341,26 @@ export default function App() {
     return () => window.removeEventListener('scroll', fn)
   }, [mileFracs])
 
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 2200)
+    return () => clearTimeout(t)
+  }, [])
+
   const scrollTo = (id: string) => document.getElementById(id.toLowerCase())?.scrollIntoView({ behavior: 'smooth' })
   const year = new Date().getFullYear()
 
   return (
-    <div className="portfolio">
+    <>
+    {loading && (
+      <div className={`loader-overlay ${!loading ? 'loader-hide' : ''}`}>
+        <div className="loader-content">
+          <div className="loader-logo">PS</div>
+          <div className="loader-bar"><div className="loader-fill" /></div>
+          <p className="loader-text">Crafting experience…</p>
+        </div>
+      </div>
+    )}
+    <div className="portfolio" style={{ opacity: loading ? 0 : 1, transition: 'opacity 0.6s ease' }}>
 
       {/* ── Navbar ── */}
       <nav className={`navbar ${navScrolled ? 'scrolled' : ''}`}>
@@ -658,5 +674,6 @@ export default function App() {
         <p className="footer-sub">Made with ❤ and too much coffee</p>
       </footer>
     </div>
+    </>
   )
 }
