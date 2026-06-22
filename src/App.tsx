@@ -217,7 +217,23 @@ function Counter({ value, suffix }: { value: number; suffix: string }) {
   return <span ref={ref} className="stat-num">{count}{suffix}</span>
 }
 
-// ── Runner ─────────────────────────────────────────────────────────────────────
+// ── Helix path ────────────────────────────────────────────────────────────────
+const ITEM_H = 200
+const SVG_H  = JOURNEY.length * ITEM_H  // 1000
+const HX_CX  = 60
+const HX_AMP = 46
+
+const HELIX_PATH = (() => {
+  let d = `M ${HX_CX} 0`
+  for (let i = 0; i < JOURNEY.length; i++) {
+    const y0 = i * ITEM_H, ym = y0 + ITEM_H / 2, y1 = (i + 1) * ITEM_H
+    const px = HX_CX + (i % 2 === 0 ? -HX_AMP : HX_AMP)
+    d += ` C ${HX_CX} ${y0 + 50},${px} ${ym - 10},${px} ${ym}`
+    d += ` C ${px} ${ym + 10},${HX_CX} ${y1 - 50},${HX_CX} ${y1}`
+  }
+  return d
+})()
+
 // ── Reveal hook ────────────────────────────────────────────────────────────────
 function useReveal(): [React.RefObject<HTMLElement | null>, boolean] {
   const ref = useRef<HTMLElement>(null)
@@ -242,7 +258,7 @@ export default function App() {
   const [activeSection, setActiveSection] = useState('')
   const [activeJourneyIdx, setActiveJourneyIdx] = useState(-1)
   const journeyRef = useRef<HTMLDivElement>(null)
-  const journeyLineRef = useRef<HTMLDivElement>(null)
+  const journeyLineRef = useRef<SVGPathElement>(null)
   const typed = useTyping(ROLES)
 
   const [aboutRef, aboutVisible] = useReveal()
@@ -272,13 +288,18 @@ export default function App() {
   }, [])
 
   useEffect(() => {
+    const pathEl = journeyLineRef.current
+    if (!pathEl) return
+    const len = pathEl.getTotalLength()
+    pathEl.style.strokeDasharray = `${len}`
+    pathEl.style.strokeDashoffset = `${len}`
+
     const fn = () => {
-      const wrap = journeyRef.current, line = journeyLineRef.current
-      if (!wrap || !line) return
+      const wrap = journeyRef.current
+      if (!wrap) return
       const rect = wrap.getBoundingClientRect()
       const p = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / rect.height))
-      line.style.transform = `scaleY(${p})`
-      // activate milestone when its fraction of the timeline has been passed
+      pathEl.style.strokeDashoffset = `${len * (1 - p)}`
       const step = 1 / JOURNEY.length
       setActiveJourneyIdx(Math.min(JOURNEY.length - 1, Math.floor(p / step) - 1 + (p > 0.05 ? 1 : 0)))
     }
@@ -463,40 +484,78 @@ export default function App() {
           <h2 className="section-heading">My Journey</h2>
           <p className="section-sub">From student to engineer — the road so far</p>
 
-          <div className="timeline" ref={journeyRef}>
-            {/* Spine */}
-            <div className="tl-spine-track">
-              <div className="tl-spine-fill" ref={journeyLineRef} />
-            </div>
+          <div className="helix-wrap" ref={journeyRef} style={{ '--helix-h': `${SVG_H}px` } as React.CSSProperties}>
+            {/* Winding spine SVG */}
+            <svg
+              className="helix-spine-svg"
+              viewBox={`0 0 120 ${SVG_H}`}
+              width="120"
+              height={SVG_H}
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <defs>
+                <linearGradient id="hxGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2={SVG_H}>
+                  <stop offset="0%" stopColor="#6c63ff" />
+                  <stop offset="50%" stopColor="#e91e8c" />
+                  <stop offset="100%" stopColor="#00bcd4" />
+                </linearGradient>
+              </defs>
+              {/* Faint background track */}
+              <path d={HELIX_PATH} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="2.5" strokeLinecap="round" />
+              {/* Scroll-animated glowing fill */}
+              <path
+                ref={journeyLineRef}
+                d={HELIX_PATH}
+                fill="none"
+                stroke="url(#hxGrad)"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+              {/* Milestone dots at S-curve peaks */}
+              {JOURNEY.map((m, i) => {
+                const px = HX_CX + (i % 2 === 0 ? -HX_AMP : HX_AMP)
+                const py = (i + 0.5) * ITEM_H
+                const active = activeJourneyIdx >= i
+                return (
+                  <g key={i}>
+                    <circle cx={px} cy={py} r="10"
+                      fill={active ? m.color : 'var(--bg3)'}
+                      stroke={m.color} strokeWidth="2.5"
+                      style={{ transition: 'fill .4s, filter .4s', filter: active ? `drop-shadow(0 0 10px ${m.color}90)` : 'none' }}
+                    />
+                    <text x={px} y={py} textAnchor="middle" dominantBaseline="central"
+                      fontSize="10" style={{ pointerEvents: 'none', userSelect: 'none' }}>{m.icon}</text>
+                  </g>
+                )
+              })}
+            </svg>
 
+            {/* Milestone cards */}
             {JOURNEY.map((m, i) => {
+              const isLeft = i % 2 === 0
               const active = activeJourneyIdx >= i
-              const side = i % 2 === 0 ? 'tl-left' : 'tl-right'
               return (
-                <div key={i} className={`tl-item ${side} ${active ? 'tl-active' : ''}`}>
-                  {/* Dot on the spine */}
-                  <div className="tl-dot" style={{ background: active ? m.color : 'var(--bg3)', borderColor: m.color, boxShadow: active ? `0 0 18px ${m.color}88` : 'none' }}>
-                    <span className="tl-dot-icon">{m.icon}</span>
-                  </div>
-
-                  {/* Card */}
-                  <div className="tl-card" style={{ borderColor: m.color }}>
-                    <div className="tl-card-bar" style={{ background: m.color }} />
-                    <span className="tl-year" style={{ color: m.color }}>{m.year}</span>
-                    <h3 className="tl-title">{m.title}</h3>
-                    <p className="tl-sub">{m.subtitle}</p>
-                    <p className="tl-detail">{m.detail}</p>
-                    <span className={`mile-tag tag-${m.type}`}>{m.type}</span>
-                    {m.projects.length > 0 && (
-                      <div className="mile-projects">
-                        {m.projects.map(p => (
-                          <span key={p.name} className="mile-proj-tag" style={{ '--proj-color': m.color } as React.CSSProperties} title={p.desc}>
-                            {p.icon} {p.name}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                <div
+                  key={i}
+                  className={`hx-card ${isLeft ? 'hx-left' : 'hx-right'} ${active ? 'hx-active' : ''}`}
+                  style={{ '--hx-top': `${(i + 0.5) * ITEM_H}px`, '--hx-color': m.color } as React.CSSProperties}
+                >
+                  <div className="hx-top-bar" style={{ background: m.color }} />
+                  <span className="hx-year">{m.year}</span>
+                  <h3 className="hx-title">{m.title}</h3>
+                  <p className="hx-sub">{m.subtitle}</p>
+                  <p className="hx-detail">{m.detail}</p>
+                  {m.projects.length > 0 && (
+                    <div className="hx-projs">
+                      {m.projects.map(p => (
+                        <span key={p.name} className="hx-proj"
+                          style={{ '--proj-color': m.color } as React.CSSProperties}
+                          title={p.desc}
+                        >{p.icon} {p.name}</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )
             })}
