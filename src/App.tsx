@@ -103,7 +103,8 @@ function ParticleField({ theme }: { theme: string }) {
     resize()
     window.addEventListener('resize', resize)
 
-    const count = Math.min(65, Math.floor(window.innerWidth / 20))
+    const isMobile = window.innerWidth < 640
+    const count = isMobile ? 20 : Math.min(65, Math.floor(window.innerWidth / 20))
     const particles = Array.from({ length: count }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
@@ -124,14 +125,16 @@ function ParticleField({ theme }: { theme: string }) {
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1
       })
 
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const a = particles[i], b = particles[j]
-          const dist = Math.hypot(a.x - b.x, a.y - b.y)
-          if (dist < 130) {
-            ctx.strokeStyle = `rgba(${light ? '108,99,255' : '180,130,255'},${(light ? 0.22 : 0.16) * (1 - dist / 130)})`
-            ctx.lineWidth = 0.8
-            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke()
+      if (!isMobile) {
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const a = particles[i], b = particles[j]
+            const dist = Math.hypot(a.x - b.x, a.y - b.y)
+            if (dist < 130) {
+              ctx.strokeStyle = `rgba(${light ? '108,99,255' : '180,130,255'},${(light ? 0.22 : 0.16) * (1 - dist / 130)})`
+              ctx.lineWidth = 0.8
+              ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke()
+            }
           }
         }
       }
@@ -262,6 +265,7 @@ function useReveal(): [React.RefObject<HTMLElement | null>, boolean] {
 
 // ── App ────────────────────────────────────────────────────────────────────────
 export default function App() {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const [navScrolled, setNavScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('')
@@ -517,7 +521,7 @@ export default function App() {
               const m = JOURNEY[i], active = activeJourneyIdx >= i
               return (
                 <g key={i}>
-                  {active && (
+                  {active && !isMobile && (
                     <>
                       <circle cx={dot.x} cy={dot.y} r="38" fill="none" stroke={m.color} strokeWidth="2" opacity="0.6">
                         <animate attributeName="r" values="38;60;38" dur="2s" repeatCount="indefinite" />

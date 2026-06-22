@@ -649,6 +649,22 @@ body {
   .hide-mobile { display: none; }
 }
 
+/* ── Mobile performance: kill GPU-heavy effects ────────────────────────────── */
+@media (max-width: 640px) {
+  /* Orbs: remove blur entirely — just use faint tinted overlays */
+  .section-orbs .orb {
+    filter: none !important;
+    opacity: 0.07 !important;
+    animation-duration: 30s !important;
+  }
+  /* Hero blobs: same */
+  .hero-blob { filter: none !important; opacity: 0.08 !important; }
+  /* Particle canvas: hidden on mobile, replaced by CSS gradient bg */
+  .particle-canvas { display: none; }
+  /* Pause path pulse on mobile — no compositor cost */
+  .active-path { animation: none !important; }
+}
+
 @media (max-width: 380px) {
   .hero-ctas { flex-direction: column; }
   .btn-primary,.btn-outline { width: 85%; text-align: center; }
