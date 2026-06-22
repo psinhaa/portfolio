@@ -7,7 +7,7 @@ import CompanyPage from './CompanyPage'
 const ROLES = ['Software Engineer', 'Angular Developer', 'Full Stack Developer', 'React Developer', 'UI Craftsperson', 'Node.JS Developer', 'AI Enuthusiastic', 'Ionic Developer']
 
 const STATS = [
-  { value: 3, suffix: '+', label: 'Years Experience' },
+  { value: 4, suffix: '+', label: 'Years Experience' },
   { value: 2, suffix: '', label: 'Companies' },
   { value: 10, suffix: '+', label: 'Projects Built' },
   { value: 8, suffix: '+', label: 'Technologies' },
