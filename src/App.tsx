@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
 import './App.css'
-import { COMPANIES, COLLEGE_PROJECTS } from './data'
+import { COMPANIES, COLLEGE_PROJECTS, type Company } from './data'
 import CompanyPage from './CompanyPage'
 
 // ── Journey SVG constants ──────────────────────────────────────────────────────
@@ -276,10 +275,8 @@ function useReveal(): [React.RefObject<HTMLElement | null>, boolean] {
 
 // ── App ────────────────────────────────────────────────────────────────────────
 export default function App() {
-  const navigate = useNavigate()
-  const location = useLocation()
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
-  const companyMatch = location.pathname.match(/^\/company\/(.+)$/)
+  const [activeCompany, setActiveCompany] = useState<Company | null>(null)
   const [loading, setLoading] = useState(() => !sessionStorage.getItem('ps_loaded'))
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const [navScrolled, setNavScrolled] = useState(false)
@@ -381,9 +378,9 @@ export default function App() {
           </div>
         </div>
       )}
-      {companyMatch && (
+      {activeCompany && (
         <div className="company-overlay">
-          <CompanyPage />
+          <CompanyPage company={activeCompany} onClose={() => setActiveCompany(null)} />
         </div>
       )}
       <div className="portfolio" style={{ opacity: loading ? 0 : 1, transition: 'opacity 0.6s ease' }}>
@@ -644,7 +641,7 @@ export default function App() {
 
           <div className="exp-cards">
             {COMPANIES.map(c => (
-              <div key={c.id} className="exp-card" style={{ '--accent': c.color } as React.CSSProperties} onClick={() => navigate(`/company/${c.id}`)}>
+              <div key={c.id} className="exp-card" style={{ '--accent': c.color } as React.CSSProperties} onClick={() => setActiveCompany(c)}>
                 <div className="exp-glow" style={{ background: `linear-gradient(135deg, ${c.color}, ${c.accent})` }} />
                 <div className="exp-top">
                   <div className="exp-logo" style={{ background: `linear-gradient(135deg, ${c.color}, ${c.accent})` }}>{c.logo}</div>

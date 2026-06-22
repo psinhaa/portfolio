@@ -1,39 +1,25 @@
 import { useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { COMPANIES } from './data'
+import type { Company } from './data'
 import './CompanyPage.css'
 
-export default function CompanyPage() {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const company = COMPANIES.find(c => c.id === id);
-
-  useEffect(() => { window.scrollTo(0, 0) }, [])
-
-  if (!company) {
-    return (
-      <div className="cp-not-found">
-        <h2>Company not found</h2>
-        <button onClick={() => navigate('/')}>← Back</button>
-      </div>
-    )
-  }
+export default function CompanyPage({ company, onClose }: { company: Company; onClose: () => void }) {
+  useEffect(() => {
+    const el = document.querySelector('.company-overlay')
+    el?.scrollTo(0, 0)
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
 
   return (
     <div className="cp-root" style={{ '--cp-color': company.color, '--cp-accent': company.accent } as React.CSSProperties}>
-
-      {/* Ambient orbs */}
       <div className="cp-orbs" aria-hidden="true">
         <div className="cp-orb cp-orb1" style={{ background: company.color }} />
         <div className="cp-orb cp-orb2" style={{ background: company.accent }} />
       </div>
 
-      {/* Back button */}
-      <button className="cp-back" onClick={() => navigate(-1)}>
-        ← Back to Portfolio
-      </button>
+      <button className="cp-back" onClick={onClose}>← Back to Portfolio</button>
 
-      {/* Hero */}
       <header className="cp-hero">
         <div className="cp-logo">{company.logo}</div>
         <div className="cp-hero-text">
@@ -44,14 +30,11 @@ export default function CompanyPage() {
       </header>
 
       <div className="cp-body">
-
-        {/* Overview */}
         <section className="cp-section">
           <h2 className="cp-section-title">About the Company</h2>
           <p className="cp-overview">{company.overview}</p>
         </section>
 
-        {/* Responsibilities */}
         <section className="cp-section">
           <h2 className="cp-section-title">What I Did</h2>
           <ul className="cp-resp-list">
@@ -64,7 +47,6 @@ export default function CompanyPage() {
           </ul>
         </section>
 
-        {/* Projects */}
         <section className="cp-section">
           <h2 className="cp-section-title">Projects I Worked On</h2>
           <div className="cp-projects">
@@ -83,14 +65,15 @@ export default function CompanyPage() {
                 <div className="cp-tech-chips">
                   {p.tech.map(t => <span key={t} className="cp-tech-chip" style={{ '--chip-color': p.color } as React.CSSProperties}>{t}</span>)}
                 </div>
-                {/* <a href={p.link} target="_blank" rel="noreferrer" className="cp-proj-link" style={{ color: p.color }}>
-                  {p.badge ? '🌐 Visit Website →' : '⌥ View on GitHub →'}
-                </a> */}
+                {p.badge && (
+                  <a href={p.link} target="_blank" rel="noreferrer" className="cp-proj-link" style={{ color: p.color }}>
+                    🌐 Visit Website →
+                  </a>
+                )}
               </div>
             ))}
           </div>
         </section>
-
       </div>
     </div>
   )
