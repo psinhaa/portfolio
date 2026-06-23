@@ -6,3 +6,7 @@
 # Node artifact files
 node_modules/
 dist/
+
+# Claude Code — per-developer overrides + audit trail (never commit)
+.claude/settings.local.json
+.claude/audit.log
