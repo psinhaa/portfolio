@@ -82,9 +82,19 @@ export const COMPANIES: Company[] = [
         emoji: '🧠',
         tagline: 'Healthcare companion & symptom tracker',
         description:
-          'Integrates essential features to track health metrics, monitor performance, record symptoms and document attacks — providing invaluable insights for healthcare providers. Built with Angular and RxJS for real-time data flow.',
+          'Built in 2023 — integrates essential features to track health metrics, monitor performance, record symptoms and document attacks — providing invaluable insights for healthcare providers. Built with Angular and RxJS for real-time data flow.',
         tech: ['Angular', 'TypeScript', 'Ionic', 'RxJS', 'REST API'],
         color: '#00bcd4',
+        link: 'https://github.com/psinhaa',
+      },
+      {
+        name: 'The Climb',
+        emoji: '📈',
+        tagline: 'All-in-one personal wellness & lifestyle tracker',
+        description:
+          'Built in 2024 — a comprehensive day-to-day tracker covering gaming stats, hydration, period tracking, and general wellness. Integrates natively with Apple Health and Samsung Health to sync real-world data, giving users a single dashboard for every aspect of their daily life.',
+        tech: ['Angular', 'Ionic', 'TypeScript', 'Apple Health', 'Samsung Health', 'REST API'],
+        color: '#a855f7',
         link: 'https://github.com/psinhaa',
       },
     ],
