@@ -25,23 +25,23 @@ export type Company = {
 
 export const COMPANIES: Company[] = [
   {
-    id: 'squint-metrics',
-    name: 'Squint Metrics',
-    role: 'Software Engineer',
-    period: 'Mar 2023 – Present',
-    location: 'Gurugram / Remote',
-    color: '#e91e8c',
-    accent: '#a855f7',
-    logo: '🚀',
+    id: 'venue-advantage',
+    name: 'Venue Advantage, Inc.',
+    role: 'Software Engineer 3',
+    period: 'Jun 2026 – Present',
+    location: 'New Delhi / Remote',
+    color: '#ff9800',
+    accent: '#e91e8c',
+    logo: '🏟️',
     overview:
-      'Squint Metrics is a product & services company focused on healthcare and sports-tech verticals. Working here I build pixel-perfect, performant web apps using Angular, React, Ionic, and Node.js — collaborating closely with design and product teams to ship features used by real customers every sprint.',
+      'Venue Advantage is a first-of-its-kind cloud-based platform that streamlines the organisation and sales of live entertainment advertising and sponsorship opportunities — starting with college sports venues. As Software Engineer 3, I lead front-end architecture decisions, own core product features end-to-end, and collaborate directly with the founding team to ship a product used by US college athletics programs.',
     responsibilities: [
-      'Developing and maintaining Angular + Ionic mobile-first applications',
-      'Building React & TypeScript front-ends with component libraries',
-      'Integrating REST APIs and third-party SDKs into production apps',
-      'Collaborating with UX/UI designers to implement pixel-perfect interfaces',
-      'Code reviews, mentoring juniors, and maintaining CI/CD pipelines',
-      'Performance optimisation and accessibility improvements',
+      'Leading React + Node.js front-end development for the core sponsorship marketplace',
+      'Architecting component libraries and design-system foundations for the platform',
+      'Building 3D venue visualisation features and real-time pricing optimisation flows',
+      'Owning full feature delivery from API design to pixel-perfect UI implementation',
+      'Collaborating with product and design to define and ship the roadmap',
+      'Code reviews, performance profiling, and maintaining CI/CD pipelines',
     ],
     projects: [
       {
@@ -55,6 +55,28 @@ export const COMPANIES: Company[] = [
         link: 'https://www.venue-advantage.com/',
         badge: '🟢 Active',
       },
+    ],
+  },
+  {
+    id: 'squint-metrics',
+    name: 'Squint Metrics',
+    role: 'Software Engineer',
+    period: 'Mar 2023 – May 2026',
+    location: 'Gurugram / Remote',
+    color: '#e91e8c',
+    accent: '#a855f7',
+    logo: '🚀',
+    overview:
+      'Squint Metrics is a product & services company focused on healthcare and sports-tech verticals. Over 3+ years here I built pixel-perfect, performant web apps using Angular, React, Ionic, and Node.js — collaborating closely with design and product teams to ship features used by real customers every sprint.',
+    responsibilities: [
+      'Developing and maintaining Angular + Ionic mobile-first applications',
+      'Building React & TypeScript front-ends with component libraries',
+      'Integrating REST APIs and third-party SDKs into production apps',
+      'Collaborating with UX/UI designers to implement pixel-perfect interfaces',
+      'Code reviews, mentoring juniors, and maintaining CI/CD pipelines',
+      'Performance optimisation and accessibility improvements',
+    ],
+    projects: [
       {
         name: 'NeuroSum',
         emoji: '🧠',

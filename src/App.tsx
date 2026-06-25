@@ -7,8 +7,8 @@ import CompanyPage from './CompanyPage'
 const ROLES = ['Software Engineer', 'Angular Developer', 'Full Stack Developer', 'React Developer', 'UI Craftsperson', 'Node.JS Developer', 'AI Enuthusiastic', 'Ionic Developer']
 
 const STATS = [
-  { value: 4, suffix: '+', label: 'Years Experience' },
-  { value: 2, suffix: '', label: 'Companies' },
+  { value: 5, suffix: '+', label: 'Years Experience' },
+  { value: 3, suffix: '', label: 'Companies' },
   { value: 10, suffix: '+', label: 'Projects Built' },
   { value: 8, suffix: '+', label: 'Technologies' },
 ]
@@ -19,15 +19,16 @@ const TERMINAL_LINES = [
   { text: '', type: 'empty' },
   { text: '$ cat about.json', type: 'cmd' },
   { text: '{', type: 'code' },
-  { text: '  role:     "Software Engineer"', type: 'prop' },
-  { text: '  exp:      "4+ years"', type: 'prop' },
-  { text: '  stack:    ["Angular","React"]', type: 'prop' },
-  { text: '  location: "Rajasthan, India"', type: 'prop' },
+  { text: '  role:     "Software Engineer 3"', type: 'prop' },
+  { text: '  company:  "Venue Advantage, Inc."', type: 'prop' },
+  { text: '  exp:      "5+ years"', type: 'prop' },
+  { text: '  stack:    ["React","Node.js","Angular"]', type: 'prop' },
+  { text: '  location: "New Delhi, India · Remote"', type: 'prop' },
   { text: '  open:      true  🟢', type: 'highlight' },
   { text: '}', type: 'code' },
   { text: '', type: 'empty' },
   { text: '$ git log --oneline', type: 'cmd' },
-  { text: 'a3f2b  feat: Venue Advantage', type: 'git' },
+  { text: 'a3f2b  feat: sponsorship marketplace v2', type: 'git' },
   { text: 'b2e1c  feat: NeuroSum healthcare app', type: 'git' },
   { text: 'c1g5d  feat: Kart e-commerce platform', type: 'git' },
 ]
@@ -54,21 +55,21 @@ const JOURNEY = [
     projects: [{ icon: '🌱', name: 'AEYC-IDAHO', desc: 'Non-profit membership portal' }, { icon: '🖨️', name: 'AHA 3D Printer', desc: 'Python hardware controller' }],
   },
   {
-    year: 'Mar 2023 – Present', type: 'now', title: 'Software Engineer',
-    subtitle: 'Squint Metrics · Gurugram / Remote', detail: 'Pixel-perfect UIs with Angular, Ionic & React. Close collaboration with UX/UI designers.',
+    year: 'Mar 2023 – May 2026', type: 'work', title: 'Software Engineer',
+    subtitle: 'Squint Metrics · Gurugram / Remote', detail: 'Pixel-perfect UIs with Angular, Ionic & React across healthcare and sports-tech products.',
     icon: '🚀', color: '#e91e8c',
     projects: [{ icon: '🧠', name: 'NeuroSum', desc: 'Healthcare symptom tracker' }, { icon: '🏟️', name: 'Venue Advantage', desc: 'Sports sponsorship platform' }],
   },
   {
-    year: '2024 – Now', type: 'milestone', title: 'Current Focus',
-    subtitle: 'Full Stack · AI Integration', detail: 'Shipping Venue Advantage and exploring AI-powered product features.',
-    icon: '⚡', color: '#a855f7',
-    projects: [],
+    year: 'Jun 2026 – Present', type: 'now', title: 'Software Engineer 3',
+    subtitle: 'Venue Advantage, Inc. · New Delhi / Remote', detail: 'Leading front-end architecture for a first-of-its-kind sports sponsorship platform serving US college athletics.',
+    icon: '🏟️', color: '#ff9800',
+    projects: [{ icon: '⚡', name: 'Sponsorship Marketplace', desc: 'Real-time pricing & 3D venue visualisation' }],
   },
   {
-    year: 'Future', type: 'start', title: 'Next Chapter',
-    subtitle: 'Open to Opportunities', detail: 'Looking for roles that combine great engineering culture with impactful products.',
-    icon: '🌟', color: '#00bcd4',
+    year: 'What\'s Next', type: 'start', title: 'The Road Ahead',
+    subtitle: 'Scaling · AI · Impact', detail: 'Building great products, growing as an engineer, and exploring where AI and great UX intersect.',
+    icon: '🌟', color: '#a855f7',
     projects: [],
   },
 ]
@@ -384,9 +385,9 @@ export default function App() {
               </p>
 
               <div className="hero-mini-stats">
-                <span><strong>4+</strong> yrs</span>
+                <span><strong>5+</strong> yrs</span>
                 <span className="divider">·</span>
-                <span><strong>2</strong> companies</span>
+                <span><strong>3</strong> companies</span>
                 <span className="divider">·</span>
                 <span><strong>10+</strong> shipped projects</span>
               </div>
@@ -419,14 +420,14 @@ export default function App() {
             <div className="about-text">
               <h2 className="section-heading left-heading">About Me</h2>
               <p className="about-para">
-                I'm a <strong>Software Engineer</strong> with 4+ years building modular, scalable frontends.
-                My stack is Angular-first with React growing stronger every day. I care deeply about{' '}
+                I'm a <strong>Software Engineer</strong> with 5+ years building modular, scalable frontends.
+                My stack spans Angular, React, and Node.js — with a relentless focus on{' '}
                 <em>pixel-perfect UI</em>, clean component architecture, and code that future-me won't hate.
               </p>
               <p className="about-para">
                 Beyond code: I enjoy breaking down complex problems into simple interfaces —
                 turning design mockups into living, breathing web experiences. Currently at{' '}
-                <strong className="text-pink">Squint Metrics</strong>, Gurugram.
+                <strong style={{ color: '#ff9800' }}>Venue Advantage, Inc.</strong>, New Delhi.
               </p>
               <div className="about-chips">
                 {['Problem Solver', 'UI Enthusiast', 'Team Player', 'Fast Learner', 'Detail-Oriented'].map(c => (
@@ -440,12 +441,13 @@ export default function App() {
                 <span className="code-filename">parul.config.ts</span>
               </div>
               <pre className="code-body"><code>{`const parul = {
-  role: "Software Engineer",
-  location: "Rajasthan, India",
-  experience: "4+ years",
+  role: "Software Engineer 3",
+  company: "Venue Advantage, Inc.",
+  location: "New Delhi, India · Remote",
+  experience: "5+ years",
 
   stack: {
-    primary:  ["Angular", "React"],
+    primary:  ["React", "Angular"],
     backend:  ["Node.js", "Express"],
     database: ["MongoDB", "MySQL"],
     lang:     ["TypeScript", "JS"],
